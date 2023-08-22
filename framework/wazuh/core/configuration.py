@@ -1197,7 +1197,7 @@ def get_active_configuration(agent_id: str, component: str, configuration: str) 
         dest_socket = common.REMOTED_SOCKET
 
         # Simple socket message
-        msg = f"{str(agent_id).zfill(3)} {component} {GETCONFIG_COMMAND} {configuration}"
+        msg = f"{agent_id} {component} {GETCONFIG_COMMAND} {configuration}"
 
         # Socket connection
         try:

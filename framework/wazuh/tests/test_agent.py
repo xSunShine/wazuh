@@ -1510,7 +1510,7 @@ def test_get_agents_big_env(mock_conn, mock_send, mock_get_agents, insert_agents
     """
 
     def agent_ids_format(ids_list):
-        return [str(agent_id).zfill(3) for agent_id in ids_list]
+        return [str(agent_id) for agent_id in ids_list]
 
     with patch('wazuh.agent.get_agents_info', return_value=set(agent_ids_format(range(100000)))):
         result = get_agents(agent_list=agent_ids_format(agent_list), **params).render()

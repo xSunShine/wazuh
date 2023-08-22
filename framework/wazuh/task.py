@@ -50,7 +50,7 @@ def get_task_status(filters: dict = None, select: list = None, search: dict = No
     # Fill with zeros the agent_id
     for element in data['items']:
         try:
-            element['agent_id'] = str(element['agent_id']).zfill(3)
+            element['agent_id'] = element['agent_id']
         except KeyError:
             pass
 

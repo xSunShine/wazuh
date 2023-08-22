@@ -1739,14 +1739,14 @@ class WazuhDBQuery(object):
         self._add_select_to_query()
         self._execute_data_query()
         try:
-            resources = list(map(lambda d: str(d[resource]).zfill(3), self._data))
+            resources = list(map(lambda d: str(d[resource]), self._data))
             maximum_value = min(self.limit, len(resources)) if self.limit is not None else len(resources)
             for item in resources:
                 if self.rbac_negate:
-                    if item.zfill(3) not in rbac_ids:
+                    if item not in rbac_ids:
                         final_ids.append(item)
                 else:
-                    if item.zfill(3) in rbac_ids:
+                    if item in rbac_ids:
                         final_ids.append(item)
                 if len(final_ids) >= maximum_value:
                     break

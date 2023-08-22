@@ -212,7 +212,7 @@ def test_WazuhDBQueryAgents_format_data_into_dictionary(mock_socket_conn, data):
     # Assert format_fields inside _format_data_into_dictionary is working as expected
     res = result['items'][0]
 
-    assert res["id"] == str(d["id"]).zfill(3), "ID is not as expected"
+    assert res["id"] == d["id"], "ID is not as expected"
     assert res["status"] == d["status"], "status is not as expected"
     assert isinstance(res["group"], list) and len(res["group"]) == len(d["group"].split(",")), \
         "'group' has different type or length than expected"
@@ -645,10 +645,11 @@ def test_agent_remove_ko(mock_remove_authd):
 @patch('wazuh.core.agent.WazuhSocketJSON')
 def test_agent_remove_authd(mock_wazuh_socket):
     """Tests if method remove_authd() works as expected"""
-    agent = Agent('000')
+    id = '000'
+    agent = Agent(id)
     agent._remove_authd(purge=True)
     mock_wazuh_socket.return_value.send.assert_called_once_with(
-        {"function": "remove", "arguments": {"id": str(0).zfill(3), "purge": True}})
+        {"function": "remove", "arguments": {"id": id, "purge": True}})
     mock_wazuh_socket.return_value.receive.assert_called_once()
     mock_wazuh_socket.return_value.close.assert_called_once()
 

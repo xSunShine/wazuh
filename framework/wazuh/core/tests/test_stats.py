@@ -190,7 +190,7 @@ def test_get_daemons_stats_from_socket(agent_id, daemon, response):
             mock_send.assert_called_once_with(b'getstate')
         else:
             mock_socket.assert_called_once_with(os.path.join(common.WAZUH_PATH, "queue", "sockets", "remote"))
-            mock_send.assert_called_once_with(f"{str(agent_id).zfill(3)} {daemon} getstate".encode())
+            mock_send.assert_called_once_with(f"{agent_id} {daemon} getstate".encode())
 
 
 def test_get_daemons_stats_from_socket_ko():

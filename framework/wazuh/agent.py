@@ -1189,7 +1189,7 @@ def upgrade_agents(agent_list: list = None, wpk_repo: str = None, version: str =
                 # Success, return agent and task IDs
                 if socket_error == 0:
                     task_agent = {
-                        'agent': str(agent_result['agent']).zfill(3),
+                        'agent': agent_result['agent'],
                         'task_id': agent_result['task_id']
                     }
                     result.affected_items.append(task_agent)
@@ -1198,7 +1198,7 @@ def upgrade_agents(agent_list: list = None, wpk_repo: str = None, version: str =
                 # Upgrade error for specific agents
                 elif (error_code := 1810 + socket_error) in ERROR_CODES_UPGRADE_SOCKET:
                     error = WazuhError(error_code, cmd_error=True, extra_message=agent_result['message'])
-                    result.add_failed_item(id_=str(agent_result['agent']).zfill(3), error=error)
+                    result.add_failed_item(id_=agent_result['agent'], error=error)
 
                 # Upgrade error for all agents, bad request
                 elif error_code in ERROR_CODES_UPGRADE_SOCKET_BAD_REQUEST:
@@ -1291,14 +1291,14 @@ def get_upgrade_result(agent_list: list = None, filters: dict = None, q: str = N
                 task_error = task_result.pop('error')
                 # Success, return agent and task IDs
                 if task_error == 0:
-                    task_result['agent'] = str(task_result['agent']).zfill(3)
+                    task_result['agent'] = task_result['agent']
                     result.affected_items.append(task_result)
                     result.total_affected_items += 1
 
                 # Upgrade error for specific agents (no task in DB)
                 elif (error_code := 1810 + task_error) in ERROR_CODES_UPGRADE_SOCKET_GET_UPGRADE_RESULT:
                     error = WazuhError(error_code, cmd_error=True, extra_message=task_result['message'])
-                    result.add_failed_item(id_=str(task_result['agent']).zfill(3), error=error)
+                    result.add_failed_item(id_=task_result['agent'], error=error)
 
                 # Upgrade error for all agents, internal server error
                 else:

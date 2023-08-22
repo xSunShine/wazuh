@@ -224,8 +224,6 @@ async def set_group(agent_id: str, group_id: str, quiet: bool = False, replace: 
     replace : bool
         Whether to append the new group to current agent's groups or to replace it.
     """
-    agent_id = f"{int(agent_id)}".zfill(3)
-
     ans = 'y' if quiet else get_stdin(f"Do you want to add the group '{group_id}' to the agent '{agent_id}'? [y/N]: ")
 
     if ans.lower() == 'y':

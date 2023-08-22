@@ -239,7 +239,7 @@ def get_daemons_stats_from_socket(agent_id: str, daemon: str) -> dict:
 
     sockets_path = os.path.join(common.WAZUH_PATH, "queue", "sockets")
 
-    if str(agent_id).zfill(3) == '000':
+    if agent_id == '0':
         # Some daemons do not exist in agent 000
         if daemon in {'agent'}:
             raise WazuhError(1310)
@@ -247,7 +247,7 @@ def get_daemons_stats_from_socket(agent_id: str, daemon: str) -> dict:
         command = "getstate"
     else:
         dest_socket = common.REMOTED_SOCKET
-        command = f"{str(agent_id).zfill(3)} {daemon} getstate"
+        command = f"{agent_id} {daemon} getstate"
 
     # Socket connection
     try:

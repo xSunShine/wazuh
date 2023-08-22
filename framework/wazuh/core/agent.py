@@ -685,7 +685,7 @@ class Agent:
         dict
             Message.
         """
-        msg = {"function": "remove", "arguments": {"id": str(self.id).zfill(3), "purge": purge}}
+        msg = {"function": "remove", "arguments": {"id": self.id, "purge": purge}}
 
         authd_socket = WazuhSocketJSON(common.AUTHD_SOCKET)
         authd_socket.send(msg)
@@ -794,9 +794,6 @@ class Agent:
         Agent ID.
         """
         # Check arguments
-        if id:
-            id = id.zfill(3)
-
         if key and len(key) < 64:
             raise WazuhError(1709)
 
@@ -1237,9 +1234,7 @@ def format_fields(field_name: str, value: str) -> str:
     value : str
         Value of the field.
     """
-    if field_name == 'id':
-        return str(value).zfill(3)
-    elif field_name == 'group':
+    if field_name == 'group':
         return value.split(',')
     elif field_name in ['dateAdd', 'lastKeepAlive', 'disconnection_time']:
         return get_date_from_timestamp(value) if not isinstance(value, str) else value
@@ -1336,7 +1331,7 @@ def expand_group(group_name: str) -> set:
             agents = json.loads(payload)
 
             for agent in agents[0]['data'] if group_name == '*' else agents:
-                agent_id = str(agent['id'] if isinstance(agent, dict) else agent).zfill(3)
+                agent_id = agent['id'] if isinstance(agent, dict) else agent
                 agents_ids.append(agent_id)
 
             if status == 'ok':

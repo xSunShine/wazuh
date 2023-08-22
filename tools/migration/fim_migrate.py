@@ -93,7 +93,7 @@ def _fim_decode(fline):
 
 def check_file_entry(agent, cfile, wdb_socket):
     # Send message
-    msg = "agent {0} sql select count(*) from fim_entry where file='".format(str(agent).zfill(3)).encode()
+    msg = "agent {0} sql select count(*) from fim_entry where file='".format(agent).encode()
     msg = msg + cfile + b"';"
     logging.debug(msg)
     msg = struct.pack('<I', len(msg)) + msg
@@ -124,7 +124,7 @@ def check_file_entry(agent, cfile, wdb_socket):
 
 def insert_fim(agent, fim_array, stype, wdb_socket):
     # Send message
-    msg = "agent {0} syscheck save {1} ".format(str(agent).zfill(3), stype).encode()
+    msg = "agent {0} syscheck save {1} ".format(agent, stype).encode()
     msg = msg + fim_array[0] + "!0:".encode() + fim_array[1] + " ".encode() + fim_array[2]
     logging.debug(msg)
     msg = struct.pack('<I', len(msg)) + msg
@@ -286,7 +286,7 @@ if __name__ == '__main__':
         dbfile = "{0}/({1}) {2}->syscheck".format(_syscheck_dir, agt[1], agt[2])
         if isfile(dbfile):
             if _verbose:
-                logging.info("[{0}/{1}] Upgrading FIM database for agent '{2}'...".format(pos, total_agents, str(agt[0]).zfill(3)))
+                logging.info("[{0}/{1}] Upgrading FIM database for agent '{2}'...".format(pos, total_agents, str(agt[0])))
             with open(dbfile, 'rb') as syscheck:
                 for line in syscheck:
                     if not line[0] == b'#':
@@ -310,18 +310,18 @@ if __name__ == '__main__':
                         logging.info("[{0}/{1}] {2} file entries processed...".format(pos, total_agents, count))
             if _verbose:
                 if error == 0 or count > 0:
-                    logging.info("[{0}/{1}] Added {2} file entries in agent '{3}' database.".format(pos, total_agents, count, str(agt[0]).zfill(3)))
+                    logging.info("[{0}/{1}] Added {2} file entries in agent '{3}' database.".format(pos, total_agents, count, str(agt[0])))
                 if error > 0:
                     logging.warn("[{0}/{1}] {2} file entries were not added.".format(pos, total_agents, error))
         else:
-            logging.warn("[{0}/{1}] Cannot find agent '{2}' FIM database.".format(pos, total_agents, str(agt[0]).zfill(3)))
+            logging.warn("[{0}/{1}] Cannot find agent '{2}' FIM database.".format(pos, total_agents, str(agt[0])))
         # Registry files
         count = 0
         error = 0
         regfile = "{0}/({1}) {2}->syscheck-registry".format(_syscheck_dir, agt[1], agt[2])
         if isfile(regfile):
             if _verbose:
-                logging.info("[{0}/{1}] Upgrading FIM database (syscheck-registry) for agent '{2}'...".format(pos, total_agents, str(agt[0]).zfill(3)))
+                logging.info("[{0}/{1}] Upgrading FIM database (syscheck-registry) for agent '{2}'...".format(pos, total_agents, str(agt[0])))
             with open(regfile, 'rb') as syscheck:
                 for line in syscheck:
                     if not line[0] == b'#':
@@ -345,7 +345,7 @@ if __name__ == '__main__':
                         logging.info("[{0}/{1}] {2} registry entries processed...".format(pos, total_agents, count))
             if _verbose:
                 if error == 0 or count > 0:
-                    logging.info("[{0}/{1}] Added {2} registry entries in agent '{3}' database.".format(pos, total_agents, count, str(agt[0]).zfill(3)))
+                    logging.info("[{0}/{1}] Added {2} registry entries in agent '{3}' database.".format(pos, total_agents, count, str(agt[0])))
                 if error > 0:
                     logging.warn("[{0}/{1}] {2} registry entries were not added.".format(pos, total_agents, error))
 

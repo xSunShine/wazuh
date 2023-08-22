@@ -1336,7 +1336,7 @@ def test_WazuhDBQuery_protected_filter_date(mock_socket_conn, mock_isfile, mock_
 @pytest.mark.parametrize('execute_value, expected_result', [
     ([{'id': 99}, {'id': 100}], {'items': [{'id': '099'}, {'id': '100'}], 'totalItems': 0}),
     ([{'id': 1}], {'items': [{'id': '001'}], 'totalItems': 0}),
-    ([{'id': i} for i in range(30000)], {'items': [{'id': str(i).zfill(3)} for i in range(30000)], 'totalItems': 0})
+    ([{'id': i} for i in range(30000)], {'items': [{'id': str(i)} for i in range(30000)], 'totalItems': 0})
 ])
 @patch("wazuh.core.database.isfile", return_value=True)
 @patch('socket.socket.connect')
@@ -1353,9 +1353,9 @@ def test_WazuhDBQuery_general_run(mock_socket_conn, mock_isfile, execute_value, 
     ([{'id': 99}, {'id': 100}], ['001', '099', '101'], False, [{'id': 99}],
      {'items': [{'id': '099'}], 'totalItems': 1}),
     ([{'id': 1}], [], True, [{'id': 1}], {'items': [{'id': '001'}], 'totalItems': 1}),
-    ([{'id': i} for i in range(30000)], [str(i).zfill(3) for i in range(15001)], True,
+    ([{'id': i} for i in range(30000)], [str(i) for i in range(15001)], True,
      [{'id': i} for i in range(15001, 30000)],
-     {'items': [{'id': str(i).zfill(3)} for i in range(15001, 30000)], 'totalItems': 14999})
+     {'items': [{'id': str(i)} for i in range(15001, 30000)], 'totalItems': 14999})
 ])
 @patch("wazuh.core.database.isfile", return_value=True)
 @patch('socket.socket.connect')
