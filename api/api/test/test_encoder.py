@@ -37,4 +37,4 @@ def test_encoder_dumps(o):
 
 def test_encoder_prettify():
     """Test prettify method from API encoder using WazuhAPIJSONEncoder."""
-    assert prettify({'k1': 'v1'}) == '{\n   "k1": "v1"\n}'
+    assert prettify({'k1': 'v1'}) == '{\n  "k1": "v1"\n}'
