@@ -2,18 +2,19 @@
 name: 'Planned: Support new OSs'
 about: Add support for a new OS
 title: Support new OSs - OS name & version
-labels: level/epic, type/enhancement
+labels: level/task, request/operational, type/maintenance
 assignees: ''
 
 ---
 
-# Description 
-
-This issue aims to add support for Support name & version.
+# Description
+| Related issue |
+|---|
+| Issue number |
 
 | Agent support | Agent tier | Central components support | OS type |
 |-|-|-|-|
-|Yes/No | # | Yes/No| Major/Minor/New family |
+| Yes/No | 1/2/3 | Yes/No | Major/Minor/Patch |
 
 # Plan
 
