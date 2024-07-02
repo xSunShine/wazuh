@@ -17,7 +17,6 @@
 #include "../wrappers/common.h"
 #include "../wrappers/posix/dirent_wrappers.h"
 #include "../wrappers/posix/pthread_wrappers.h"
-#include "../wrappers/posix/stat_wrappers.h"
 #include "../wrappers/wazuh/config/syscheck_config_wrappers.h"
 #include "../wrappers/wazuh/shared/debug_op_wrappers.h"
 #include "../wrappers/wazuh/shared/hash_op_wrappers.h"
@@ -33,6 +32,7 @@
 #include "../wrappers/wazuh/shared/file_op_wrappers.h"
 
 #include "syscheck.h"
+#include "../wrappers/posix/stat_wrappers.h"
 #include "../../config/syscheck-config.h"
 #include "db/include/db.h"
 
@@ -1163,11 +1163,8 @@ static void test_fim_get_checksum_wrong_size(void **state) {
     strcpy(fim_data->local_data->checksum, "");
 
     fim_get_checksum(fim_data->local_data);
-#ifndef TEST_WINAGENT
+
     assert_string_equal(fim_data->local_data->checksum, "0a0070d140761418be81531ad48f5909f410e161");
-#else
-    assert_string_equal(fim_data->local_data->checksum, "82f41449afd19d3e1ed2ad37c0a35624f09f5dfe");
-#endif
 }
 
 static void test_fim_check_depth_success(void **state) {
