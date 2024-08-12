@@ -1,6 +1,10 @@
 FROM ppc64le/centos:7
-# Install all the necessary tools to build the packages
 
+# Fix: CentOS 7 EOL'd on June-30-2024 and they took down mirrorlist.centos.org
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+
+# Install all the necessary tools to build the packages
 RUN rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 RUN yum -y install centos-release-scl
 RUN mv /etc/yum.repos.d/CentOS-SCLo-scl-rh.repo /etc/yum.repos.d/CentOS-SCLo-scl-rh.repo.old
