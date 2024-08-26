@@ -468,5 +468,4 @@ void registerHandlers(const std::weak_ptr<::router::ITesterAPI>& tester,
         throw std::runtime_error("Tester API handlers registration failed");
     }
 }
-
 } // namespace api::tester::handlers
