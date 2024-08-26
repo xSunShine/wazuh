@@ -1,0 +1,96 @@
+name: Engine Coverage check
+
+on:
+  # Triggers the workflow on pull request but only changes in the src/engine/ directory.
+  pull_request:
+    types: [synchronize, opened, reopened, ready_for_review]
+    paths:
+      - 'src/engine/**'
+      - '.github/workflows/engine_coverage.yml'
+
+  workflow_dispatch:
+    inputs:
+      build_preset:
+        type: boolean
+        description: 'Set to true to full coverage'
+        required: false
+        default: false
+
+# Ensures only one instance of this workflow is running per PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+env:
+  BUILD_PRESET: debug-coverage
+  # Relative path from ${{github.workspace}}
+  ENGINE_PATH: src/engine
+  ENGINE_MODULES_DIR: source
+  ENGINE_MODULES_PATH: src/engine/source
+  BUILD_DIR: build
+  BUILD_PATH: src/engine/build
+  BUILD_MODULES_PATH: src/engine/build/source
+
+jobs:
+  build:
+    name: Engine Coverage check
+
+    # Runs only if the PR status is different to Draft
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v4
+
+    - name: Cache CMake and ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        key: ${{ github.workflow }}-${{ runner.os }}
+
+    - name: Get changed files
+      id: changed-files
+      uses: tj-actions/changed-files@v45
+      with:
+        dir_names: "true"
+        diff_relative: "true"
+
+    - name: Check the modules that have changed
+      env:
+        ALL_MOD_DIR: ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
+      run: |
+        # Filter if any folder under ${{env.ENGINE_MODULES_PATH}} has changed
+        modules_changed=() # Array to store the modules that have changed
+        for module in $ALL_MOD_DIR; do
+          if [[ $module == ${{env.ENGINE_MODULES_PATH}}* ]]; then
+            # The module is the folder name of the module, so we need to remove the prefix path and the suffix path
+            module=$(echo $module | sed "s|${{env.ENGINE_MODULES_PATH}}||" | sed "s|/.*||")
+            modules_changed+=($module)
+          fi
+        done
+
+        # Remove duplicates
+        modules_changed=($(echo "${modules_changed[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
+
+        # Print and save the modules that have changed
+        echo "MODULES_CHANGED=${modules_changed[@]}" | tee -a $GITHUB_ENV
+
+
+#    - name: Setup VCPKG
+#      uses: lukka/run-vcpkg@v11
+#      with:
+#        vcpkgDirectory: '${{env.ENGINE_DIR}}/vcpkg'
+#        vcpkgGitCommitId: 'a42af01b72c28a8e1d7b48107b33e4f286a55ef6'
+#        vcpkgJsonGlob: '${{env.ENGINE_DIR}}/vcpkg.json'
+#
+#
+#    - name: Configure CMake
+#      run: cmake --preset=${{env.BUILD_PRESET}} --no-warn-unused-cli -S ${{env.ENGINE_DIR}}
+#
+#    - name: Build
+#      run: cmake --build ${{env.ENGINE_DIR}}/build --target all_tests -j$(nproc)
+#
+#    - name: Unit Test
+#      # Run unit tests using CTest
+#      working-directory: ${{env.ENGINE_DIR}}/build
+#      run: ctest -T test -C ${{env.BUILD_PRESET}} --output-on-failure -j$(nproc)
