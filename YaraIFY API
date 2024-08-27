@@ -1,0 +1,132 @@
+Step 1: Create a new file in the Wazuh integrations directory
+
+Create a new file in the Wazuh integrations directory (e.g., /var/ossec/etc/integrations/yaraify_api.py) with the following content:
+
+python
+
+#!/usr/bin/env python3
+
+import requests
+
+import json
+
+
+def yaraify_scan(file_path):
+
+    api_endpoint = 'https://yaraify-api.abuse.ch/api/v1/'
+
+    files = {'file': (open(file_path, 'rb'))}
+
+    response = requests.post(api_endpoint, files=files, verify=True)
+
+    return response.content.decode("utf-8", "ignore")
+
+
+def main():
+
+    file_path = sys.argv[1]
+
+    scan_result = yaraify_scan(file_path)
+
+    print(scan_result)
+
+
+if __name__ == '__main__':
+
+    main()
+
+Step 2: Make the script executable
+
+Make the script executable by running the following command:
+
+chmod +x /var/ossec/etc/integrations/yaraify_api.py
+
+Step 3: Add the integration to the Wazuh configuration
+
+Add the following lines to the Wazuh ossec.conf file (e.g., /var/ossec/etc/ossec.conf):
+
+xml
+
+<integration>
+
+  <name>yaraify_api</name>
+
+  <executable>/var/ossec/etc/integrations/yaraify_api.py</executable>
+
+  <args>$FILE</args>
+
+  <scan_on_upload>true</scan_on_upload>
+
+</integration>
+
+Step 4: Create a new Wazuh rule
+
+Create a new Wazuh rule to trigger the Yaraify API scan when a file is uploaded:
+
+xml
+
+<rule id="100001" level="10">
+
+  <if_sid>550</if_sid>
+
+  <match>^File uploaded:</match>
+
+  <options>yaraify_api</options>
+
+</rule>
+
+This rule will trigger the Yaraify API scan when a file is uploaded (event ID 550).
+
+Step 5: Restart Wazuh
+
+Restart the Wazuh service to apply the changes:
+
+service wazuh-manager restart
+
+##### on Agent side 
+
+
+he Wazuh manager will scan files using the Yaraify API, not the Wazuh agent.
+
+To enable the Wazuh agent to scan files using the Yaraify API, you need to make some additional changes.
+
+Agent-side integration
+
+To integrate the Yaraify API with the Wazuh agent, you need to:
+
+    Copy the integration script to the agent: Copy the yaraify_api.py script to the Wazuh agent's integrations directory (e.g., /var/ossec/etc/integrations/yaraify_api.py on the agent).
+    Configure the agent to use the integration: Add the following lines to the Wazuh agent's ossec.conf file (e.g., /var/ossec/etc/ossec.conf on the agent):
+
+xml
+
+<integration>
+
+  <name>yaraify_api</name>
+
+  <executable>/var/ossec/etc/integrations/yaraify_api.py</executable>
+
+  <args>$FILE</args>
+
+  <scan_on_upload>true</scan_on_upload>
+
+</integration>
+
+    Restart the Wazuh agent: Restart the Wazuh agent service to apply the changes:
+
+service wazuh-agent restart
+
+Agent-side configuration
+
+To enable the Wazuh agent to scan files using the Yaraify API, you need to configure the agent to send files to the integration script. You can do this by adding the following lines to the Wazuh agent's ossec.conf file:
+
+xml
+
+<localfile>
+
+  <location>/path/to/monitored/directory</location>
+
+  <options>yaraify_api</options>
+
+</localfile>
+
+Replace /path/to/monitored/directory with the directory you want to monitor for file uploads.
